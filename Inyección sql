@@ -1,0 +1,141 @@
+# index.php
+
+<?php
+// Configuración de la conexión a la base de datos
+$host = "localhost";
+$usuario_bd = "root";
+$contrasena_bd = "";
+$nombre_bd = "login_db";
+
+// Conexión a la base de datos
+$conexion = new mysqli($host, $usuario_bd, $contrasena_bd, $nombre_bd);
+
+// Verificar la conexión
+if ($conexion->connect_error) {
+    die("Error de conexión a la base de datos: " . $conexion->connect_error);
+}
+
+// Inicializar el contador de intentos
+$intentos = 3;
+
+// Verificar si se ha enviado el formulario
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Obtener los datos del formulario
+    $usuario = $_POST["usuario"];
+    $contrasena = $_POST["contrasena"];
+
+    // Consulta para verificar el usuario y la contraseña
+    $consulta = "SELECT * FROM usuarios WHERE usuario = '$usuario' AND contra = '$contrasena'";
+    $resultado = $conexion->query($consulta);
+
+    // Verificar el resultado de la consulta
+    if ($resultado->num_rows > 0) {
+        // Usuario y contraseña correctos
+        header("Location: inicio.html");
+        exit();
+    } else {
+        // Usuario y contraseña incorrectos
+        $intentos--;
+
+        if ($intentos == 0) {
+            // Si se agotan los intentos, mostrar un mensaje de error en una ventana emergente
+            echo '<script>alert("Has agotado tus intentos. Acceso bloqueado.");</script>';
+            exit();
+        } else {
+            // Mostrar mensaje de error y actualizar el contador de intentos restantes
+            echo '<script>alert("Usuario o contraseña incorrectos. Intentos restantes: ' . $intentos . '");</script>';
+        }
+        
+    }
+}
+
+// Cerrar la conexión a la base de datos
+$conexion->close();
+?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio de Sesión</title>
+    <style>
+        body {
+            display: flex;
+            align-items:flex-start ;
+            justify-content: flex-start;
+            height: 100vh;
+            margin: 60;
+            font-family: Arial, sans-serif;
+            background-color: yellow;
+        }
+
+        form {
+            background-color: yellow;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            
+        }
+
+        h2 {
+            color:black;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #4caf50;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: red;
+        }
+        
+    </style>
+</head>
+<body>
+    <form method="post" action="">
+        <h2>Inicio de Sesión</h2>
+        <label for="usuario">Usuario:</label>
+        <input type="text" id="usuario" name="usuario" required>
+
+        <label for="contrasena">Contraseña:</label>
+        <input type="password" id="contrasena" name="contrasena" required>
+
+        <input type="submit" value="Iniciar sesión">
+    </form>
+</body>
+</html>
+
+-----------------------------------------------------------------------------------------------------------
+
+#inicio.html
+
+<center>
+<h1>Bienvenido!!!!!</h1>
+</center>
+<style>
+body {
+    display: flex;
+    /*align-items: center;
+    justify-content: center;*/
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: yellow;
+}
+</style>
